@@ -20,6 +20,10 @@ option(BUILD_TESTS "Build libxml2 tests" ON)
 option(BUILD_ZLIB "Build local zlib" ON)
 
 # OPTIONS
+option(ENABLE_C14N "Enable C14N support" OFF)
+option(ENABLE_CATALOG "Enable catalog support" OFF)
+option(ENABLE_DEBUG "Enable debugging support" OFF)
+option(ENABLE_DOCB "Enable DOCB support" OFF)
 option(ENABLE_FTP "Enable FTP support" ON)
 option(ENABLE_HTML "Enable HTML support" ON)
 option(ENABLE_HTTP "Enable HTTP support" ON)
@@ -27,6 +31,8 @@ option(ENABLE_ICONV "Enable iconv support" ON)
 option(ENABLE_ICU "Enable icu support" OFF)
 option(ENABLE_ISO8859X "Enable iso8859x support if no iconv" ON)
 option(ENABLE_LEGACY "Enable deprecated APIs for compatibility" ON)
+option(ENABLE_MEM_DEBUG "Enable memory debugging support" OFF)
+option(ENABLE_MODULES "Enable dynamic module support" OFF)
 option(ENABLE_OUTPUT "Enable serialization support" ON)
 option(ENABLE_PATTERN "Enable xmlPattern selection interface" ON)
 option(ENABLE_PUSH "Enable PUSH parser interface" ON)
@@ -34,6 +40,7 @@ option(ENABLE_PYTHON "Enable Python libraries" OFF)
 option(ENABLE_READER "Enable xmlReader interface" ON)
 option(ENABLE_READLINE "Enable readline support" OFF)
 option(ENABLE_REGEXPS "Enable regular expression support" ON)
+option(ENABLE_RUN_DEBUG "Enable run debugging support" OFF)
 option(ENABLE_SAX1 "Enable (older) SAX1 interface" ON)
 option(ENABLE_SCHEMAS "Enable Relax-NG and Schemas support" ON)
 option(ENABLE_SCHEMATRON "Enable Schematron support" ON)
@@ -75,6 +82,8 @@ endif()
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_MODULE_PATH})
 
 if(ENABLE_ZLIB)
+    # TODO: need to find zlib
+    set(ENABLE_ZLIB OFF)
 #    find_package(ZLib
 #        REQUIRED
 #        "1.0"
@@ -82,6 +91,8 @@ if(ENABLE_ZLIB)
 endif()
 
 if(ENABLE_LZMA)
+    # TODO: need to find lzma
+    set(ENABLE_LZMA OFF)
 #    find_package(LIBLZMA
 #        REQUIRED
 #        "5.0"
@@ -175,11 +186,8 @@ DefineIncludeHeaders(
     dl.h
     dlfcn.h
 )
-# TODO: need to set required includes
 
-if(NOT STRING_H OR NOT STDIO_H)
-    set(ENABLE_TRIO ON)
-endif()
+set(ENABLE_TRIO NOT ${STRING_H} OR NOT ${STDIO_H})
 
 # TODO: need to check for zlib.h and if I have it, define HAVE_ZLIB_H
 
@@ -367,13 +375,11 @@ endif()
 #
 # Args:
 #   stringName              Name of string variable
-#   substitute              Subtitute string
+#   substitute              Substitute string
+#   boolean                 Boolean value to replace with 0/1
 #
-macro(ReplaceBool stringName substitute)
-    set (argn ${ARGN})
-    list(LENGTH argn count)
-
-    if (count)
+macro(ReplaceBool stringName substitute boolean)
+    if (boolean)
         set(replace 1)
     else()
         set(replace 0)
@@ -426,6 +432,13 @@ ReplaceBool(VERSION_BUFFER "@WITH_ZLIB@" ${ENABLE_ZLIB})
 ReplaceBool(VERSION_BUFFER "@WITH_LZMA@" ${ENABLE_LZMA})
 
 file(WRITE "${INCLUDE_DIR}/xmlversion.h" "${VERSION_BUFFER}")
+
+# FLAGS
+# -----
+
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    set(CMAKE_C_FLAGS  "-g -O -pedantic -W -Wformat -Wno-format-extra-args -Wunused -Wimplicit -Wreturn-type -Wswitch -Wcomment -Wtrigraphs -Wchar-subscripts -Wuninitialized -Wparentheses -Wshadow -Wpointer-arith -Wcast-align -Wwrite-strings -Waggregate-return -Wstrict-prototypes -Wmissing-prototypes -Wnested-externs -Winline -Wredundant-decls -Wall")
+endif()
 
 # INCLUDES
 # --------

@@ -26,5 +26,5 @@ check_prototype_definition(iconv
 if(ICONV_CONST)
     add_definitions(-DICONV_CONST=const)
 else()
-    add_definitions(-DICONV_CONST)
+    add_definitions(-DICONV_CONST=)
 endif()
