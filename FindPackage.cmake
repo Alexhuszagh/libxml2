@@ -8,7 +8,7 @@
 # directly, it merely provides library definitions to be invoked
 # by other find utilities.
 
-include(CheckCXXSourceCompiles)
+include(CheckCSourceCompiles)
 
 
 # Return if the package name has previously been found
@@ -163,7 +163,7 @@ macro(CheckCompiles packageName)
     set(CMAKE_REQUIRED_LIBRARIES ${${packageName}_LIBRARIES})
 
     # COMPILATION
-    check_cxx_source_compiles("${${packageName}_CODE}" ${packageName}_COMPILES)
+    check_c_source_compiles("${${packageName}_CODE}" ${packageName}_COMPILES)
     if(NOT ${packageName}_COMPILES)
         set(${packageName}_FOUND FALSE)
         message(SEND_ERROR "Cannot compile a simple ${packageName} program.")

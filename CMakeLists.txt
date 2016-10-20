@@ -89,7 +89,7 @@ if(ENABLE_ZLIB)
 endif()
 
 if(ENABLE_LZMA)
-    find_package(LIBLZMA
+    find_package(Xz
         REQUIRED
         "5.0"
     )
@@ -442,7 +442,7 @@ endif()
 include_directories(include)
 
 if(ENABLE_LZMA)
-    include_directories(${LIBLZMA_INCLUDE_DIRS})
+    include_directories(${Xz_INCLUDE_DIRS})
 endif()
 
 if(ENABLE_ZLIB)
@@ -470,7 +470,7 @@ else()
 endif()
 
 target_link_libraries(LibXml2
-    ${LIBLZMA_LIBRARIES}
+    ${Xz_LIBRARIES}
     ${ZLib_LIBRARIES}
     ${IConv_LIBRARIES}
 )
