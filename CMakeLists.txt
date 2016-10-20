@@ -1,0 +1,425 @@
+#  :copyright: (c) 2015-2016 The Regents of the University of California.
+#  :license: MIT, see licenses/mit.md for more details.
+
+cmake_minimum_required(VERSION 3.4)
+project(LIBXML C)
+set(C_STANDARD 90)
+
+# VERSION
+# -------
+
+set(LIBXML_VERSION_MAJOR 2)
+set(LIBXML_VERSION_MINOR 9)
+set(LIBXML_VERSION_PATCH 4)
+
+# ARGUMENTS
+# ---------
+
+option(BUILD_STATIC "Build static libxml2" ON)
+option(BUILD_TESTS "Build libxml2 tests" ON)
+option(BUILD_ZLIB "Build local zlib" ON)
+
+# OPTIONS
+option(ENABLE_FTP "Enable FTP support" ON)
+option(ENABLE_HTML "Enable HTML support" ON)
+option(ENABLE_HTTP "Enable HTTP support" ON)
+option(ENABLE_ICONV "Enable iconv support" ON)
+option(ENABLE_ICU "Enable icu support" OFF)
+option(ENABLE_ISO8859X "Enable iso8859x support if no iconv" ON)
+option(ENABLE_LEGACY "Enable deprecated APIs for compatibility" ON)
+option(ENABLE_OUTPUT "Enable serialization support" ON)
+option(ENABLE_PATTERN "Enable xmlPattern selection interface" ON)
+option(ENABLE_PUSH "Enable PUSH parser interface" ON)
+option(ENABLE_PYTHON "Enable Python libraries" OFF)
+option(ENABLE_READER "Enable xmlReader interface" ON)
+option(ENABLE_READLINE "Enable readline support" OFF)
+option(ENABLE_REGEXPS "Enable regular expression support" ON)
+option(ENABLE_SAX1 "Enable (older) SAX1 interface" ON)
+option(ENABLE_SCHEMAS "Enable Relax-NG and Schemas support" ON)
+option(ENABLE_SCHEMATRON "Enable Schematron support" ON)
+option(ENABLE_THREADS "Enable threading support" ON)
+option(ENABLE_THREAD_ALLOC "Enable per thread memory support" OFF)
+option(ENABLE_TREE "Enable DOM like tree manipulation" OFF)
+option(ENABLE_VALID "Enable DTD validation support" ON)
+option(ENABLE_XINCLUDE "Enable XInclude support" ON)
+option(ENABLE_XPATH "Enable XPATH support" ON)
+option(ENABLE_XPTR "Enable XPointer support" ON)
+option(ENABLE_WRITER "Enable xmlWriter interface" ON)
+
+# COMPRESSION
+option(ENABLE_ZLIB "Enable zlib support" ON)
+option(ENABLE_LZMA "Enable lzma support" ON)
+
+if(ENABLE_SCHEMAS)
+    set(ENABLE_PATTERN ON)
+    set(ENABLE_REGEXPS ON)
+endif()
+
+if(ENABLE_SCHEMATRON)
+    set(ENABLE_SCHEMAS ON)
+    set(ENABLE_TREE ON)
+    set(ENABLE_XPATH ON)
+endif()
+
+if(ENABLE_READER)
+    set(ENABLE_PUSH ON)
+endif()
+
+if(ENABLE_XPTR)
+    set(ENABLE_XPATH ON)
+endif()
+
+# DEPENDENCIES
+# ------------
+
+if(ENABLE_ZLIB)
+#    find_package(ZLib
+#        REQUIRED
+#        "1.0"
+#    )
+endif()
+
+if(ENABLE_LZMA)
+#    find_package(LIBLZMA
+#        REQUIRED
+#        "5.0"
+#    )
+endif()
+
+# HEADERS
+# -------
+
+include(CheckIncludeFile)
+
+# Check if header can be found. If it can, set uppercase variable
+# of version and define includes for the header.
+#
+# Args:
+#   header          Path to header
+#
+# Example:
+#   CheckIncludeFile(sys/stat.h)
+#
+macro(DefineIncludeHeader header)
+    string(REGEX REPLACE "[.\\/]" "_" headerName ${header})
+    string(TOUPPER ${headerName} headerName)
+    CHECK_INCLUDE_FILE(${header} ${headerName})
+    if(${headerName})
+        add_definitions(-DHAVE_${headerName}=1)
+    endif()
+endmacro(DefineIncludeHeader)
+
+# Call DefineIncludeHeader for each argument.
+#
+# Example:
+#   DefineIncludeHeaders(string.h stdio.h sys/stat.h)
+#
+macro(DefineIncludeHeaders)
+    set(headers ${ARGN})
+    foreach(header ${headers})
+        DefineIncludeHeader(${header})
+    endforeach(header)
+endmacro(DefineIncludeHeaders)
+
+DefineIncludeHeaders(
+    string.h
+    stdio.h
+    sys/stat.h
+    fcntl.h
+    unistd.h
+    ctype.h
+    dirent.h
+    errno.h
+    malloc.h
+    stdarg.h
+    sys/stat.h
+    sys/types.h
+    stdint.h
+    inttypes.h
+    time.h
+    ansidecl.h
+    ieeefp.h
+    nan.h
+    math.h
+    limits.h
+    fp_class.h
+    float.h
+    stdlib.h
+    sys/socket.h
+    netinet/in.h
+    arpa/inet.h
+    netdb.h
+    sys/time.h
+    sys/select.h
+    poll.h
+    sys/mman.h
+    sys/timeb.h
+    signal.h
+    arpa/nameser.h
+    resolv.h
+    dl.h
+    dlfcn.h
+)
+# TODO: need to set required includes
+
+if(NOT STRING_H OR NOT STDIO_H)
+    set(ENABLE_TRIO ON)
+endif()
+
+# TODO: need to check for zlib.h and if I have it, define HAVE_ZLIB_H
+
+# FUNCTIONS
+# ---------
+
+include(CheckFunctionExists)
+
+# Check if function exists, and add definition if it does.
+# Sets uppercase variable if the function is found, and defines
+# a preprocessor variable that the variable is found. For example,
+# checking `strdup` sets `STRDUP` to `1` and adds `-DHAVE_STRDUP=1` to
+# the command-line.
+#
+# Args:
+#   function        Function name
+#
+# Example:
+#   CheckIncludeFile(clock_gettime)
+#
+macro(DefineFunctionExists function)
+    string(TOUPPER ${function} functionName)
+    CHECK_FUNCTION_EXISTS(${function} ${functionName})
+    if(${functionName})
+        add_definitions(-DHAVE_${functionName}=1)
+    endif()
+endmacro(DefineFunctionExists)
+
+
+# Call DefineFunctionExists for each argument.
+#
+# Example:
+#   DefineFunctionsExist(strdup strndup strerror)
+#
+macro(DefineFunctionsExist)
+    set(functions ${ARGN})
+    foreach(function ${functions})
+        DefineFunctionExists(${function})
+    endforeach(function)
+endmacro(DefineFunctionsExist)
+
+
+DefineFunctionsExist(
+    strdup
+    strndup
+    strerror
+    finite
+    isnand
+    fp_class
+    class
+    fpclass
+    strftime
+    localtime
+    gettimeofday
+    ftime
+    stat
+    _stat
+    signal
+    rand
+    rand_r
+    srand
+    time
+    isascii
+    mmap
+    munmap
+    putenv
+)
+
+if(NOT MUNMAP)
+    # mmap is useless without munmap
+    set(MMAP 0)
+endif()
+
+# SOURCES
+# -------
+
+set(SAX1_SOURCES
+    DOCBparser.c
+)
+
+set(TRIO_SOURCES
+    triostr.c
+    trio.c
+)
+
+set(LIBXML2_SOURCES
+    SAX.c
+    entities.c
+    encoding.c
+    error.c
+    parserInternals.c
+    parser.c
+    tree.c
+    hash.c
+    list.c
+    xmlIO.c
+    xmlmemory.c
+    uri.c
+    valid.c
+    xlink.c
+    HTMLparser.c
+    HTMLtree.c
+    debugXML.c
+    xpath.c
+    xpointer.c
+    xinclude.c
+    nanohttp.c
+    nanoftp.c
+    catalog.c
+    globals.c
+    threads.c
+    c14n.c
+    xmlstring.c
+    buf.c
+    xmlregexp.c
+    xmlschemas.c
+    xmlschemastypes.c
+    xmlunicode.c
+    xmlreader.c
+    relaxng.c
+    dict.c
+    SAX2.c
+    xmlwriter.c
+    legacy.c
+    chvalid.c
+    pattern.c
+    xmlsave.c
+    xmlmodule.c
+    schematron.c
+    xzlib.c
+    xzlib.c
+)
+
+#  $(THREAD_LIBS) $(Z_LIBS) $(LZMA_LIBS) $(ICONV_LIBS) $(M_LIBS) $(WIN32_EXTRA_LIBADD)
+
+if(ENABLE_TRIO)
+    list(APPEND LIBXML2_SOURCES ${TRIO_SOURCES})
+endif()
+
+if(ENABLE_SAX1)
+    list(APPEND LIBXML2_SOURCES ${SAX1_SOURCES})
+endif()
+
+# PYTHON
+# ------
+
+# TODO: need to find Python, Python.h
+
+# THREADS
+# -------
+
+include(FindThreads)
+
+if(ENABLE_THREADS)
+    if(CMAKE_USE_PTHREADS_INIT)
+        # TODO: Need a variable and need to link libraries....
+        list(APPEND LIBXML_LINK_LIBRARIES pthread)
+    elseif(CMAKE_USE_WIN32_THREADS_INIT)
+        add_definitions(-DHAVE_WIN32_THREADS)
+    else()
+        message(WARNING "Threads requested but no suitable thread implementation found")
+        set(ENABLE_THREADS OFF)
+    endif()
+
+    #add_definitions(-D_REENTRANT)
+endif()
+
+# MACROS
+# ------
+
+# Replace symbol with 0 or 1 boolean expression.
+#
+# Args:
+#   stringName              Name of string variable
+#   substitute              Subtitute string
+#
+macro(ReplaceBool stringName substitute)
+    set (argn ${ARGN})
+    list(LENGTH argn count)
+
+    if (count)
+        set(replace 1)
+    else()
+        set(replace 0)
+    endif()
+    string(REPLACE ${substitute} ${replace} ${stringName} "${${stringName}}")
+
+endmacro(ReplaceBool)
+
+# VERSION
+# -------
+
+set(INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include/libxml")
+file(READ "${INCLUDE_DIR}/xmlversion.h.in" VERSION_BUFFER)
+string(REPLACE "@VERSION@" "${LIBXML_VERSION_MAJOR}.${LIBXML_VERSION_MINOR}.${LIBXML_VERSION_PATCH}" VERSION_BUFFER "${VERSION_BUFFER}")
+string(REPLACE "@LIBXML_VERSION_NUMBER@" "${LIBXML_VERSION_MAJOR}0${LIBXML_VERSION_MINOR}0${LIBXML_VERSION_PATCH}" VERSION_BUFFER "${VERSION_BUFFER}")
+string(REPLACE "@LIBXML_VERSION_EXTRA@" "" VERSION_BUFFER "${VERSION_BUFFER}")
+
+ReplaceBool(VERSION_BUFFER "@WITH_TRIO@" ${ENABLE_TRIO})
+ReplaceBool(VERSION_BUFFER "@WITH_TREE@" ${ENABLE_TREE})
+ReplaceBool(VERSION_BUFFER "@WITH_THREADS@" ${ENABLE_THREADS})
+ReplaceBool(VERSION_BUFFER "@WITH_THREAD_ALLOC@" ${ENABLE_THREAD_ALLOC})
+ReplaceBool(VERSION_BUFFER "@WITH_OUTPUT@" ${ENABLE_OUTPUT})
+ReplaceBool(VERSION_BUFFER "@WITH_PUSH@" ${ENABLE_PUSH})
+ReplaceBool(VERSION_BUFFER "@WITH_READER@" ${ENABLE_READER})
+ReplaceBool(VERSION_BUFFER "@WITH_PATTERN@" ${ENABLE_PATTERN})
+ReplaceBool(VERSION_BUFFER "@WITH_WRITER@" ${ENABLE_WRITER})
+ReplaceBool(VERSION_BUFFER "@WITH_SAX1@" ${ENABLE_SAX1})
+ReplaceBool(VERSION_BUFFER "@WITH_FTP@" ${ENABLE_FTP})
+ReplaceBool(VERSION_BUFFER "@WITH_HTTP@" ${ENABLE_HTTP})
+ReplaceBool(VERSION_BUFFER "@WITH_VALID@" ${ENABLE_VALID})
+ReplaceBool(VERSION_BUFFER "@WITH_HTML@" ${ENABLE_HTML})
+ReplaceBool(VERSION_BUFFER "@WITH_LEGACY@" ${ENABLE_LEGACY})
+ReplaceBool(VERSION_BUFFER "@WITH_C14N@" ${ENABLE_C14N})
+ReplaceBool(VERSION_BUFFER "@WITH_CATALOG@" ${ENABLE_CATALOG})
+ReplaceBool(VERSION_BUFFER "@WITH_DOCB@" ${ENABLE_DOCB})
+ReplaceBool(VERSION_BUFFER "@WITH_XPATH@" ${ENABLE_XPATH})
+ReplaceBool(VERSION_BUFFER "@WITH_XPTR@" ${ENABLE_XPTR})
+ReplaceBool(VERSION_BUFFER "@WITH_XINCLUDE@" ${ENABLE_XINCLUDE})
+ReplaceBool(VERSION_BUFFER "@WITH_ICONV@" ${ENABLE_ICONV})
+ReplaceBool(VERSION_BUFFER "@WITH_ICU@" ${ENABLE_ICU})
+ReplaceBool(VERSION_BUFFER "@WITH_ISO8859X@" ${ENABLE_ISO8859X})
+ReplaceBool(VERSION_BUFFER "@WITH_DEBUG@" ${ENABLE_DEBUG})
+ReplaceBool(VERSION_BUFFER "@WITH_MEM_DEBUG@" ${ENABLE_MEM_DEBUG})
+ReplaceBool(VERSION_BUFFER "@WITH_RUN_DEBUG@" ${ENABLE_RUN_DEBUG})
+ReplaceBool(VERSION_BUFFER "@WITH_REGEXPS@" ${ENABLE_REGEXPS})
+ReplaceBool(VERSION_BUFFER "@WITH_SCHEMAS@" ${ENABLE_SCHEMAS})
+ReplaceBool(VERSION_BUFFER "@WITH_SCHEMATRON@" ${ENABLE_SCHEMATRON})
+ReplaceBool(VERSION_BUFFER "@WITH_MODULES@" ${ENABLE_MODULES})
+ReplaceBool(VERSION_BUFFER "@WITH_ZLIB@" ${ENABLE_ZLIB})
+ReplaceBool(VERSION_BUFFER "@WITH_LZMA@" ${ENABLE_LZMA})
+
+file(WRITE "${INCLUDE_DIR}/xmlversion.h" "${VERSION_BUFFER}")
+
+# INCLUDES
+# --------
+
+include_directories(include)
+
+# LIBRARIES
+# ---------
+
+if(BUILD_STATIC)
+    add_library(LibXml2
+        STATIC
+        ${LIBXML2_SOURCES}
+    )
+    add_definitions(-DLIBXML_STATIC)
+else()
+    add_library(LibXml2
+        SHARED
+        ${LIBXML2_SOURCES}
+    )
+endif()
+
+set_target_properties(LibXml2
+    PROPERTIES OUTPUT_NAME xml2
+)

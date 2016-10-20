@@ -36,7 +36,9 @@
  * copy to config.h own "preset" configuration file.
  * As result ifdef HAVE_CONFIG_H is omited here.
  */
+#if defined(HAVE_CONFIG_H)
 #include "config.h"
+#endif
 #include <libxml/xmlversion.h>
 #endif
 

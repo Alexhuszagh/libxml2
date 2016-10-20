@@ -267,7 +267,7 @@ then
     fi
     if test "$with_ftp" = ""
     then
-      with_ftp=no 
+      with_ftp=no
     fi
     if test "$with_history" = ""
     then
@@ -279,7 +279,7 @@ then
     fi
     if test "$with_http" = ""
     then
-      with_http=no 
+      with_http=no
     fi
     if test "$with_iconv" = ""
     then
@@ -294,7 +294,7 @@ then
       with_legacy=no
     fi
     if test "$with_mem_debug" = ""
-    then 
+    then
       with_mem_debug=no
     fi
     if test "$with_output" = ""
@@ -723,7 +723,7 @@ if test $enable_ipv6 = yes; then
       AC_MSG_RESULT($have_broken_ss_family)
       if test x$have_broken_ss_family = xyes ; then
         AC_DEFINE(HAVE_BROKEN_SS_FAMILY, [],
-	  [Whether struct sockaddr::__ss_family exists]) 
+	  [Whether struct sockaddr::__ss_family exists])
         AC_DEFINE(ss_family, __ss_family,
 	  [ss_family is not defined here, use __ss_family instead])
       else
@@ -743,7 +743,7 @@ if test $enable_ipv6 = yes; then
       AC_DEFINE([HAVE_GETADDRINFO], [], [Define if getaddrinfo is there])
     fi
   fi
-fi 
+fi
 
 dnl ******************************End IPv6 checks******************************
 
@@ -959,7 +959,7 @@ if test "$with_modules" != "no" ; then
     WITH_MODULES=1
     AC_DEFINE([HAVE_SHLLOAD], [], [Have shl_load based dso])
   fi
- 
+
   if test "${libxml_have_dlopen}" = "yes"; then
     case "${host}" in
       *-*-hpux* )
@@ -979,7 +979,7 @@ fi
 
 if test "${WITH_MODULES}" = "1"; then
   TEST_MODULES="ModuleTests"
-fi  
+fi
 
 AC_SUBST(WITH_MODULES)
 AC_SUBST(MODULE_PLATFORM_LIBS)
@@ -1026,7 +1026,7 @@ dnl
 if test "${NEED_TRIO}" = "1" ; then
     echo Adding trio library for string functions
     WITH_TRIO=1
-else    
+else
     WITH_TRIO=0
 fi
 AM_CONDITIONAL(WITH_TRIO_SOURCES, test "${NEED_TRIO}" = "1")
@@ -1154,7 +1154,7 @@ dnl
 if test "$with_tree" = "no" ; then
     echo Disabling DOM like tree manipulation APIs
     WITH_TREE=0
-else    
+else
     WITH_TREE=1
 fi
 AC_SUBST(WITH_TREE)
@@ -1163,7 +1163,7 @@ if test "$with_ftp" = "no" ; then
     echo Disabling FTP support
     WITH_FTP=0
     FTP_OBJ=
-else    
+else
     WITH_FTP=1
     FTP_OBJ=nanoftp.o
 fi
@@ -1174,7 +1174,7 @@ if test "$with_http" = "no" ; then
     echo Disabling HTTP support
     WITH_HTTP=0
     HTTP_OBJ=
-else    
+else
     WITH_HTTP=1
     HTTP_OBJ=nanohttp.o
 fi
@@ -1184,7 +1184,7 @@ AC_SUBST(HTTP_OBJ)
 if test "$with_legacy" = "no" ; then
     echo Disabling deprecated APIs
     WITH_LEGACY=0
-else    
+else
     WITH_LEGACY=1
 fi
 AC_SUBST(WITH_LEGACY)
@@ -1193,7 +1193,7 @@ if test "$with_reader" = "no" ; then
     echo Disabling the xmlReader parsing interface
     WITH_READER=0
     READER_TEST=
-else    
+else
     WITH_READER=1
     READER_TEST=Readertests
     if test "$with_push" = "no" ; then
@@ -1208,7 +1208,7 @@ if test "$with_writer" = "no" ; then
     echo Disabling the xmlWriter saving interface
     WITH_WRITER=0
 #    WRITER_TEST=
-else    
+else
     WITH_WRITER=1
 #    WRITER_TEST=Writertests
     if test "$with_push" = "no" ; then
@@ -1227,7 +1227,7 @@ if test "$with_pattern" = "no" ; then
     echo Disabling the xmlPattern parsing interface
     WITH_PATTERN=0
     TEST_PATTERN=
-else    
+else
     WITH_PATTERN=1
     TEST_PATTERN=Patterntests
 fi
@@ -1238,7 +1238,7 @@ if test "$with_sax1" = "no" ; then
     echo Disabling the older SAX1 interface
     WITH_SAX1=0
     TEST_SAX=
-else    
+else
     WITH_SAX1=1
     TEST_SAX=SAXtests
 fi
@@ -1250,7 +1250,7 @@ if test "$with_push" = "no" ; then
     echo Disabling the PUSH parser interfaces
     WITH_PUSH=0
     TEST_PUSH=
-else    
+else
     WITH_PUSH=1
     TEST_PUSH="XMLPushtests"
 fi
@@ -1262,7 +1262,7 @@ if test "$with_html" = "no" ; then
     WITH_HTML=0
     HTML_OBJ=
     TEST_HTML=
-else    
+else
     WITH_HTML=1
     HTML_OBJ="HTMLparser.o HTMLtree.o"
     TEST_HTML=HTMLtests
@@ -1282,7 +1282,7 @@ if test "$with_valid" = "no" ; then
     WITH_VALID=0
     TEST_VALID=
     TEST_VTIME=
-else    
+else
     WITH_VALID=1
     TEST_VALID=Validtests
     TEST_VTIME=VTimingtests
@@ -1296,7 +1296,7 @@ if test "$with_catalog" = "no" ; then
     WITH_CATALOG=0
     CATALOG_OBJ=
     TEST_CATALOG=
-else    
+else
     WITH_CATALOG=1
     CATALOG_OBJ="catalog.o"
     TEST_CATALOG=Catatests
@@ -1309,7 +1309,7 @@ if test "$with_docbook" = "no" ; then
     echo Disabling Docbook support
     WITH_DOCB=0
     DOCB_OBJ=
-else    
+else
     WITH_DOCB=1
     DOCB_OBJ="DOCBparser.o"
 fi
@@ -1322,7 +1322,7 @@ if test "$with_xptr" = "no" ; then
     WITH_XPTR=0
     XPTR_OBJ=
     TEST_XPTR=
-else    
+else
     WITH_XPTR=1
     XPTR_OBJ=xpointer.o
     TEST_XPTR=XPtrtests
@@ -1340,7 +1340,7 @@ if test "$with_c14n" = "no" ; then
     WITH_C14N=0
     C14N_OBJ=
     TEST_C14N=
-else    
+else
     WITH_C14N=1
     C14N_OBJ="c14n.c"
     TEST_C14N=C14Ntests
@@ -1359,7 +1359,7 @@ if test "$with_xinclude" = "no" ; then
     XINCLUDE_OBJ=
     with_xinclude="no"
     TEST_XINCLUDE=
-else    
+else
     WITH_XINCLUDE=1
     XINCLUDE_OBJ=xinclude.o
     TEST_XINCLUDE=XIncludetests
@@ -1384,7 +1384,7 @@ if test "$with_schematron" = "no" ; then
     echo "Disabling Schematron support"
     WITH_SCHEMATRON=0
     TEST_SCHEMATRON=
-else 
+else
     echo "Enabled Schematron support"
     WITH_SCHEMATRON=1
     TEST_SCHEMATRON="Schematrontests"
@@ -1400,7 +1400,7 @@ if test "$with_xpath" = "no" ; then
     WITH_XPATH=0
     XPATH_OBJ=
     TEST_XPATH=
-else    
+else
     WITH_XPATH=1
     XPATH_OBJ=xpath.o
     TEST_XPATH=XPathtests
@@ -1415,7 +1415,7 @@ dnl
 if test "$with_output" = "no" ; then
     echo Disabling serialization/saving support
     WITH_OUTPUT=0
-else    
+else
     WITH_OUTPUT=1
 fi
 AC_SUBST(WITH_OUTPUT)
@@ -1572,7 +1572,7 @@ if test "$with_schemas" = "no" ; then
     echo "Disabling Schemas/Relax-NG support"
     WITH_SCHEMAS=0
     TEST_SCHEMAS=
-else    
+else
     echo "Enabled Schemas/Relax-NG support"
     WITH_SCHEMAS=1
     TEST_SCHEMAS="Schemastests Relaxtests"
@@ -1588,7 +1588,7 @@ if test "$with_regexps" = "no" ; then
     echo Disabling Regexps support
     WITH_REGEXPS=0
     TEST_REGEXPS=
-else    
+else
     WITH_REGEXPS=1
     TEST_REGEXPS="Regexptests Automatatests"
 fi
@@ -1600,7 +1600,7 @@ if test "$with_debug" = "no" ; then
     WITH_DEBUG=0
     DEBUG_OBJ=
     TEST_DEBUG=
-else    
+else
     WITH_DEBUG=1
     DEBUG_OBJ=debugXML.o
     TEST_DEBUG=Scripttests
@@ -1617,7 +1617,7 @@ if test "$with_mem_debug" = "yes" ; then
         echo Enabling memory debug support
         WITH_MEM_DEBUG=1
     fi
-else    
+else
     WITH_MEM_DEBUG=0
 fi
 AC_SUBST(WITH_MEM_DEBUG)
@@ -1625,7 +1625,7 @@ AC_SUBST(WITH_MEM_DEBUG)
 if test "$with_run_debug" = "yes" ; then
     echo Enabling runtime debug support
     WITH_RUN_DEBUG=1
-else    
+else
     WITH_RUN_DEBUG=0
 fi
 AC_SUBST(WITH_RUN_DEBUG)
