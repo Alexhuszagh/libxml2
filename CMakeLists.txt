@@ -99,12 +99,6 @@ if(ENABLE_ICONV)
     endif()
 
     include(IConvConst)
-    if(ICONV_CONST)
-        add_definitions(-DICONV_CONST=const)
-    else()
-        add_definitions(-DICONV_CONST)
-    endif()
-
 endif()
 
 # HEADERS
