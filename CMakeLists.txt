@@ -36,7 +36,7 @@ option(ENABLE_MODULES "Enable dynamic module support" OFF)
 option(ENABLE_OUTPUT "Enable serialization support" ON)
 option(ENABLE_PATTERN "Enable xmlPattern selection interface" ON)
 option(ENABLE_PUSH "Enable PUSH parser interface" ON)
-option(ENABLE_PYTHON "Enable Python libraries" OFF)
+#option(ENABLE_PYTHON "Enable Python libraries" OFF)
 option(ENABLE_READER "Enable xmlReader interface" ON)
 option(ENABLE_READLINE "Enable readline support" OFF)
 option(ENABLE_REGEXPS "Enable regular expression support" ON)
@@ -82,21 +82,17 @@ endif()
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_MODULE_PATH})
 
 if(ENABLE_ZLIB)
-    # TODO: need to find zlib
-    set(ENABLE_ZLIB OFF)
-#    find_package(ZLib
-#        REQUIRED
-#        "1.0"
-#    )
+    find_package(ZLib
+        REQUIRED
+        "1.0"
+    )
 endif()
 
 if(ENABLE_LZMA)
-    # TODO: need to find lzma
-    set(ENABLE_LZMA OFF)
-#    find_package(LIBLZMA
-#        REQUIRED
-#        "5.0"
-#    )
+    find_package(LIBLZMA
+        REQUIRED
+        "5.0"
+    )
 endif()
 
 if(ENABLE_ICONV)
@@ -445,6 +441,18 @@ endif()
 
 include_directories(include)
 
+if(ENABLE_LZMA)
+    include_directories(${LIBLZMA_INCLUDE_DIRS})
+endif()
+
+if(ENABLE_ZLIB)
+    include_directories(${ZLib_INCLUDE_DIRS})
+endif()
+
+if(ENABLE_ICONV)
+    include_directories(${IConv_INCLUDE_DIRS})
+endif()
+
 # LIBRARIES
 # ---------
 
@@ -461,6 +469,11 @@ else()
     )
 endif()
 
+target_link_libraries(LibXml2
+    ${LIBLZMA_LIBRARIES}
+    ${ZLib_LIBRARIES}
+    ${IConv_LIBRARIES}
+)
 set_target_properties(LibXml2
     PROPERTIES OUTPUT_NAME xml2
 )
