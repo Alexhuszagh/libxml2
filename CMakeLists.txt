@@ -72,6 +72,8 @@ endif()
 # DEPENDENCIES
 # ------------
 
+set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_MODULE_PATH})
+
 if(ENABLE_ZLIB)
 #    find_package(ZLib
 #        REQUIRED
@@ -84,6 +86,25 @@ if(ENABLE_LZMA)
 #        REQUIRED
 #        "5.0"
 #    )
+endif()
+
+if(ENABLE_ICONV)
+    include(IConvLibc)
+    IconvLibc()
+    if (ICONV_LIBC)
+        # IConv automatically linked through libc
+        set(IConv_FOUND 1)
+    else()
+        find_package(IConv "1.0" REQUIRED)
+    endif()
+
+    include(IConvConst)
+    if(ICONV_CONST)
+        add_definitions(-DICONV_CONST=const)
+    else()
+        add_definitions(-DICONV_CONST)
+    endif()
+
 endif()
 
 # HEADERS
@@ -236,6 +257,19 @@ DefineFunctionsExist(
 if(NOT MUNMAP)
     # mmap is useless without munmap
     set(MMAP 0)
+endif()
+
+# ICONV
+# -----
+
+if(ENABLE_ICONV)
+    include(IConvConst)
+endif()
+
+if(ICONV_CONST)
+    add_definitions(-DICONV_CONST=const)
+else()
+    add_definitions(-DICONV_CONST)
 endif()
 
 # SOURCES
