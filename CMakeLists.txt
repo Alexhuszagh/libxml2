@@ -267,7 +267,7 @@ endif()
 if(ICONV_CONST)
     add_definitions(-DICONV_CONST=const)
 else()
-    add_definitions(-DICONV_CONST)
+    add_definitions(-DICONV_CONST=)
 endif()
 
 # SOURCES
