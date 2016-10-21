@@ -115,21 +115,12 @@ endmacro(FindStaticLibs)
 #
 # Args:
 #   packageName         Name of the package
-#   script              Name of the Python script to run
-#   header              Path to header file to read
 #
 # Example:
-#   MatchVersion(ICU modules/icu_version "${ICU_INCLUDE_DIRS}/unicode/icudataver.h")
+#   MatchVersion(ICU)
 #
-macro(MatchVersion packageName script header)
+macro(MatchVersion packageName)
     if(${packageName}_FOUND AND ${packageName}_FIND_VERSION)
-        # FIND VERSION
-        set(FIND_VERSION ${PYTHON} ${script} ${header})
-        execute_process(COMMAND ${FIND_VERSION}
-            WORKING_DIRECTORY ${MODULES_DIR}
-            OUTPUT_VARIABLE ${packageName}_VERSION
-        )
-
         # MATCH VERSION
         if(${packageName}_FIND_VERSION_EXACT)
             # EXACT VERSION

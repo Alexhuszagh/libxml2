@@ -47,7 +47,16 @@ FindStaticLibs(Xz)
 # VERSION
 # -------
 
-MatchVersion(Xz version/xz "${Xz_INCLUDE_DIRS}/lzma/version.h")
+file(STRINGS "${Xz_INCLUDE_DIRS}/lzma/version.h" Xz_VERSION_CONTENTS REGEX "#define LZMA_VERSION_[A-Z]+")
+
+string(REGEX REPLACE ".*LZMA_VERSION_MAJOR ([0-9]+).*" "\\1" Xz_VERSION_MAJOR "${Xz_VERSION_CONTENTS}")
+string(REGEX REPLACE ".*LZMA_VERSION_MINOR ([0-9]+).*" "\\1" Xz_VERSION_MINOR "${Xz_VERSION_CONTENTS}")
+string(REGEX REPLACE ".*LZMA_VERSION_PATCH ([0-9]+).*" "\\1" Xz_VERSION_PATCH "${Xz_VERSION_CONTENTS}")
+
+set(Xz_VERSION_STRING "${Xz_VERSION_MAJOR}.${Xz_VERSION_MINOR}.${Xz_VERSION_PATCH}")
+set(Xz_FIND_VERSION ${Xz_VERSION_STRING})
+
+MatchVersion(Xz)
 
 # COMPILATION
 # -----------

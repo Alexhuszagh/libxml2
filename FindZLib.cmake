@@ -47,7 +47,15 @@ FindStaticLibs(ZLib)
 # VERSION
 # -------
 
-MatchVersion(ZLib version/zlib "${ZLib_INCLUDE_DIRS}/zlib.h")
+file(STRINGS "${ZLib_INCLUDE_DIRS}/zlib.h" ZLib_VERSION_CONTENTS REGEX "#define ZLIB_VERSION \"\d+\.\d+\.\d+\"")
+string(REGEX REPLACE ".*ZLIB_VERSION \"(\d+)\.\d+\.\d+\"" "\\1" ZLib_VERSION_MAJOR "${ZLib_VERSION_CONTENTS}")
+string(REGEX REPLACE ".*ZLIB_VERSION \"\d+\.(\d+)\.\d+\"" "\\1" ZLib_VERSION_MINOR "${ZLib_VERSION_CONTENTS}")
+string(REGEX REPLACE ".*ZLIB_VERSION \"\d+\.\d+\.(\d+)\"" "\\1" ZLib_VERSION_PATCH "${ZLib_VERSION_CONTENTS}")
+
+set(ZLib_VERSION_STRING "${ZLib_VERSION_MAJOR}.${ZLib_VERSION_MINOR}.${ZLib_VERSION_PATCH}")
+set(ZLib_FIND_VERSION ${ZLib_VERSION_STRING})
+
+MatchVersion(ZLib)
 
 # COMPILATION
 # -----------

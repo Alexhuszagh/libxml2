@@ -48,7 +48,14 @@ FindStaticLibs(IConv)
 # VERSION
 # -------
 
-MatchVersion(IConv version/iconv "${IConv_INCLUDE_DIRS}/iconv.h")
+file(STRINGS "${IConv_INCLUDE_DIRS}/iconv.h" Iconv_VERSION_CONTENTS REGEX "#define _LIBICONV_VERSION 0[xX][0-9a-fA-F]+")
+
+string(REGEX REPLACE ".*#define _LIBICONV_VERSION (0[xX][0-9a-fA-F]+).*" "\\1" IConv_VERSION_HEX "${Iconv_VERSION_CONTENTS}")
+math(EXPR IConv_VERSION_MAJOR "${IConv_VERSION_HEX} >> 8")
+math(EXPR IConv_VERSION_MAJOR "${IConv_VERSION_HEX} - (${IConv_VERSION_MAJOR} << 8)")
+set(IConv_VERSION_PATCH 0)
+
+MatchVersion(IConv)
 
 # COMPILATION
 # -----------
