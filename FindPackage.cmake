@@ -181,5 +181,3 @@ macro(RequiredPackageFound packageName)
         endif()
     endif()
 endmacro(RequiredPackageFound)
-
-

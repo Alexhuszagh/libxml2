@@ -19,7 +19,7 @@
 # If found, `Xz_FOUND` will be set to true, and `Xz_LIBRARIES`
 # and `Xz_INCLUDE_DIRS` will both be set.
 
-include(CheckCXXSourceCompiles)
+include(CheckCSourceCompiles)
 include(FindPackage)
 
 # REPEAT
@@ -55,7 +55,7 @@ if(Xz_FOUND)
     string(REGEX REPLACE ".*LZMA_VERSION_PATCH ([0-9]+).*" "\\1" Xz_VERSION_PATCH "${Xz_VERSION_CONTENTS}")
 
     set(Xz_VERSION_STRING "${Xz_VERSION_MAJOR}.${Xz_VERSION_MINOR}.${Xz_VERSION_PATCH}")
-    set(Xz_FIND_VERSION ${Xz_VERSION_STRING})
+    set(Xz_VERSION ${Xz_VERSION_STRING})
 
     MatchVersion(Xz)
 endif()

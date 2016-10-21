@@ -20,7 +20,7 @@
 # and `IConv_INCLUDE_DIRS` will both be set.
 
 
-include(CheckCXXSourceCompiles)
+include(CheckCSourceCompiles)
 include(FindPackage)
 
 # REPEAT
@@ -114,8 +114,11 @@ if(IConv_FOUND)
     string(REGEX REPLACE ".*#define _LIBICONV_VERSION (0[xX][0-9a-fA-F]+).*" "\\1" IConv_VERSION_HEX "${Iconv_VERSION_CONTENTS}")
     HexToDecimal(IConv_VERSION_NUMBER ${IConv_VERSION_HEX})
     math(EXPR IConv_VERSION_MAJOR "${IConv_VERSION_NUMBER} >> 8")
-    math(EXPR IConv_VERSION_MAJOR "${IConv_VERSION_NUMBER} - (${IConv_VERSION_MAJOR} << 8)")
+    math(EXPR IConv_VERSION_MINOR "${IConv_VERSION_NUMBER} - (${IConv_VERSION_MAJOR} << 8)")
     set(IConv_VERSION_PATCH 0)
+
+    set(IConv_VERSION_STRING "${IConv_VERSION_MAJOR}.${IConv_VERSION_MINOR}.${IConv_VERSION_PATCH}")
+    set(IConv_VERSION ${IConv_VERSION_STRING})
 
     MatchVersion(IConv)
 endif()
@@ -129,7 +132,9 @@ set(IConv_CODE
 
 int main(int argc, char *argv[])
 {
-    iconv_t conv = iconv_open(0, 0);
+    iconv_t conv;
+    conv = iconv_open(0, 0);
+
     iconv_close(conv);
     return 0;
 }

@@ -19,7 +19,7 @@
 # If found, `ZLib_FOUND` will be set to true, and `ZLib_LIBRARIES`
 # and `ZLib_INCLUDE_DIRS` will both be set.
 
-include(CheckCXXSourceCompiles)
+include(CheckCSourceCompiles)
 include(FindPackage)
 
 # REPEAT
@@ -54,7 +54,7 @@ if(ZLib_FOUND)
     string(REGEX REPLACE ".*ZLIB_VERSION \"[0-9]+\.[0-9]+\.([0-9]+)\"" "\\1" ZLib_VERSION_PATCH "${ZLib_VERSION_CONTENTS}")
 
     set(ZLib_VERSION_STRING "${ZLib_VERSION_MAJOR}.${ZLib_VERSION_MINOR}.${ZLib_VERSION_PATCH}")
-    set(ZLib_FIND_VERSION ${ZLib_VERSION_STRING})
+    set(ZLib_VERSION ${ZLib_VERSION_STRING})
 
     MatchVersion(ZLib)
 endif()
