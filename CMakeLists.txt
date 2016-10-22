@@ -375,7 +375,7 @@ endif()
 #   boolean                 Boolean value to replace with 0/1
 #
 macro(ReplaceBool stringName substitute boolean)
-    if (boolean)
+    if(${boolean})
         set(replace 1)
     else()
         set(replace 0)
