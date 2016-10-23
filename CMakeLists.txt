@@ -494,8 +494,11 @@ file(WRITE "${INCLUDE_DIR}/xmlversion.h" "${VERSION_BUFFER}")
 # FLAGS
 # -----
 
-if(CMAKE_COMPILER_IS_GNUC OR CMAKE_C_COMPILER_ID MATCHES "Clang")
+if(CMAKE_COMPILER_IS_GNUCC)
+    set(CMAKE_C_FLAGS "-Wno-incompatible-pointer-types -Wno-format-extra-args -Wno-builtin-macro-redefined ${CMAKE_C_FLAGS}")
+elseif(CMAKE_C_COMPILER_ID MATCHES "Clang")
     set(CMAKE_C_FLAGS "-Wno-incompatible-pointer-types -Wno-macro-redefined -Wno-empty-body ${CMAKE_C_FLAGS}")
+elseif(MSVC)
 endif()
 
 add_definitions(-DSEND_ARG2_CAST= -DGETHOSTBYNAME_ARG_CAST=)
