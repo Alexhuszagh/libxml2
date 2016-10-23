@@ -76,6 +76,11 @@ if(ENABLE_XPTR)
     set(ENABLE_XPATH ON)
 endif()
 
+set(ENABLE_LZMA OFF)
+set(ENABLE_ZLIB OFF)
+
+# TODO: need to check for va_copy, VA_COPY
+
 # DEPENDENCIES
 # ------------
 
@@ -257,6 +262,63 @@ if(NOT MUNMAP)
     set(MMAP 0)
 endif()
 
+# VACOPY
+# ------
+
+include(CheckCSourceCompiles)
+
+check_c_source_compiles("
+#include <stdarg.h>
+
+int main(int argc, char *argv[])
+{
+    va_list ap1,ap2;
+    va_copy(ap1,ap2);
+    return 0;
+}
+" HAVE_VA_COPY)
+
+if(HAVE_VA_COPY)
+    add_definitions(-DHAVE_VA_COPY)
+else()
+    check_c_source_compiles("
+    #include <stdarg.h>
+
+    int main(int argc, char *argv[])
+    {
+        va_list ap1,ap2;
+        __va_copy(ap1,ap2);
+        return 0;
+    }
+    " HAVE___VA_COPY)
+
+    if(HAVE___VA_COPY)
+        add_definitions(-DHAVE___VA_COPY)
+    endif()
+endif()
+
+# VALIST
+# ------
+
+check_c_source_compiles("
+#include <stdarg.h>
+
+void a(va_list * ap)
+{}
+
+int main(int argc, char *argv[])
+{
+    va_list ap1,ap2;
+    a(&ap1);
+    ap2 = (va_list) ap1;
+    return 0;
+}
+" VALIST_IS_ARRAY)
+
+if(VALIST_IS_ARRAY)
+    add_definitions(-DVALIST_IS_ARRAY)
+endif()
+
 # ICONV
 # -----
 
@@ -432,9 +494,12 @@ file(WRITE "${INCLUDE_DIR}/xmlversion.h" "${VERSION_BUFFER}")
 # FLAGS
 # -----
 
-if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-    set(CMAKE_C_FLAGS  "-g -O -pedantic -W -Wformat -Wno-format-extra-args -Wunused -Wimplicit -Wreturn-type -Wswitch -Wcomment -Wtrigraphs -Wchar-subscripts -Wuninitialized -Wparentheses -Wshadow -Wpointer-arith -Wcast-align -Wwrite-strings -Waggregate-return -Wstrict-prototypes -Wmissing-prototypes -Wnested-externs -Winline -Wredundant-decls -Wall")
+
+if(CMAKE_COMPILER_IS_GNUC OR CMAKE_C_COMPILER_ID MATCHES "Clang")
+    set(CMAKE_C_FLAGS "-Wno-incompatible-pointer-types -Wno-macro-redefined -Wno-empty-body ${CMAKE_C_FLAGS}")
 endif()
+
+add_definitions(-DSEND_ARG2_CAST= -DGETHOSTBYNAME_ARG_CAST=)
 
 # INCLUDES
 # --------
