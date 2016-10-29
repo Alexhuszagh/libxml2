@@ -16,7 +16,7 @@
 #ifdef LIBXML_FTP_ENABLED
 
 /* Needed for portability to Windows 64 bits */
-#if defined(__MINGW32__) || defined(_WIN32_WCE)
+#if defined(__MINGW32__) || defined(_WIN32_WCE) || defined(_MSC_VER)
 #include <winsock2.h>
 #else
 /**

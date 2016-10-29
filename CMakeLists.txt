@@ -503,6 +503,10 @@ endif()
 
 add_definitions(-DSEND_ARG2_CAST= -DGETHOSTBYNAME_ARG_CAST=)
 
+if(MSVC AND (ENABLE_HTTP OR ENABLE_FTP))
+    add_definitions(-D_WINSOCKAPI_)
+endif()
+
 # INCLUDES
 # --------
 

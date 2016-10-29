@@ -77,7 +77,7 @@
 #endif
 
 
-#if defined(__MINGW32__) || defined(_WIN32_WCE)
+#if defined(__MINGW32__) || defined(_WIN32_WCE) || defined(_MSC_VER)
 #ifndef _WINSOCKAPI_
 #define _WINSOCKAPI_
 #endif
