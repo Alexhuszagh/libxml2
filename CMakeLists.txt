@@ -78,6 +78,8 @@ endif()
 
 set(ENABLE_LZMA OFF)
 set(ENABLE_ZLIB OFF)
+set(ENABLE_HTTP OFF)
+set(ENABLE_FTP OFF)
 
 # TODO: need to check for va_copy, VA_COPY
 
@@ -417,7 +419,7 @@ if(ENABLE_THREADS)
         # TODO: Need a variable and need to link libraries....
         list(APPEND LIBXML_LINK_LIBRARIES pthread)
     elseif(CMAKE_USE_WIN32_THREADS_INIT)
-        add_definitions(-DHAVE_WIN32_THREADS)
+        add_definitions(-DHAVE_WIN32_THREADS -DHAVE_COMPILER_TLS)
     else()
         message(WARNING "Threads requested but no suitable thread implementation found")
         set(ENABLE_THREADS OFF)
@@ -499,12 +501,28 @@ if(CMAKE_COMPILER_IS_GNUCC)
 elseif(CMAKE_C_COMPILER_ID MATCHES "Clang")
     set(CMAKE_C_FLAGS "-Wno-incompatible-pointer-types -Wno-macro-redefined -Wno-empty-body ${CMAKE_C_FLAGS}")
 elseif(MSVC)
+    set(CMAKE_C_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_RELEASE} /MTd /O0")
+    set(CMAKE_C_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT /Ox")
 endif()
 
 add_definitions(-DSEND_ARG2_CAST= -DGETHOSTBYNAME_ARG_CAST=)
 
 if(MSVC AND (ENABLE_HTTP OR ENABLE_FTP))
     add_definitions(-D_WINSOCKAPI_)
+endif()
+
+if(WIN32)
+    add_definitions(-DWIN32 -D_WINDOWS -D_MBCS -DNOLIBTOOL -D_CRT_SECURE_NO_DEPRECATE -D_CRT_NONSTDC_NO_DEPRECATE)
+endif()
+
+if(CMAKE_BUILD_TYPE MATCHES Release)
+    add_definitions(-DNDEBUG)
+else()
+    add_definitions(-D_DEBUG)
+endif()
+
+if(MINGW)
+    add_definitions(-DHAVE_W32API_H)
 endif()
 
 # INCLUDES
