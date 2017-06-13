@@ -108,6 +108,10 @@ if(ENABLE_ICONV)
     if (ICONV_LIBC)
         # IConv automatically linked through libc
         set(IConv_FOUND 1)
+    elseif(APPLE)
+        # IConv provided as a platform API
+        set(IConv_FOUND 1)
+        set(IConv_LIBRARIES "/usr/lib/libiconv.dylib")
     else()
         find_package(IConv "1.0" REQUIRED)
     endif()
