@@ -1,7 +1,8 @@
 #  :copyright: (c) 2015-2016 The Regents of the University of California.
 #  :license: MIT, see licenses/mit.md for more details.
 
-cmake_minimum_required(VERSION 3.4)
+set(CMAKE_LEGACY_CYGWIN_WIN32 1)
+cmake_minimum_required(VERSION 2.8)
 project(LIBXML C)
 set(C_STANDARD 90)
 
@@ -27,7 +28,7 @@ option(ENABLE_DOCB "Enable DOCB support" OFF)
 option(ENABLE_FTP "Enable FTP support" ON)
 option(ENABLE_HTML "Enable HTML support" ON)
 option(ENABLE_HTTP "Enable HTTP support" ON)
-option(ENABLE_ICONV "Enable iconv support" ON)
+option(ENABLE_ICONV "Enable iconv support" OFF)
 option(ENABLE_ICU "Enable icu support" OFF)
 option(ENABLE_ISO8859X "Enable iso8859x support if no iconv" ON)
 option(ENABLE_LEGACY "Enable deprecated APIs for compatibility" ON)
@@ -550,23 +551,23 @@ endif()
 # ---------
 
 if(BUILD_STATIC)
-    add_library(LibXml2
+    add_library(libxml2
         STATIC
         ${LIBXML2_SOURCES}
     )
     add_definitions(-DLIBXML_STATIC)
 else()
-    add_library(LibXml2
+    add_library(libxml2
         SHARED
         ${LIBXML2_SOURCES}
     )
 endif()
 
-target_link_libraries(LibXml2
+target_link_libraries(libxml2
     ${Xz_LIBRARIES}
     ${ZLib_LIBRARIES}
     ${IConv_LIBRARIES}
 )
-set_target_properties(LibXml2
+set_target_properties(libxml2
     PROPERTIES OUTPUT_NAME xml2
 )
