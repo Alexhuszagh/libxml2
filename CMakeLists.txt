@@ -82,8 +82,6 @@ set(ENABLE_ZLIB OFF)
 set(ENABLE_HTTP OFF)
 set(ENABLE_FTP OFF)
 
-# TODO: need to check for va_copy, VA_COPY
-
 # DEPENDENCIES
 # ------------
 
@@ -409,11 +407,6 @@ if(ENABLE_SAX1)
     list(APPEND LIBXML2_SOURCES ${SAX1_SOURCES})
 endif()
 
-# PYTHON
-# ------
-
-# TODO: need to find Python, Python.h
-
 # THREADS
 # -------
 
@@ -421,7 +414,6 @@ include(FindThreads)
 
 if(ENABLE_THREADS)
     if(CMAKE_USE_PTHREADS_INIT)
-        # TODO: Need a variable and need to link libraries....
         list(APPEND LIBXML_LINK_LIBRARIES pthread)
     elseif(CMAKE_USE_WIN32_THREADS_INIT)
         add_definitions(-DHAVE_WIN32_THREADS -DHAVE_COMPILER_TLS)
@@ -506,8 +498,10 @@ if(CMAKE_COMPILER_IS_GNUCC)
 elseif(CMAKE_C_COMPILER_ID MATCHES "Clang")
     set(CMAKE_C_FLAGS "-Wno-incompatible-pointer-types -Wno-macro-redefined -Wno-empty-body ${CMAKE_C_FLAGS}")
 elseif(MSVC)
-    set(CMAKE_C_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_RELEASE} /MTd /O0")
-    set(CMAKE_C_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT /Ox")
+    set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /MTd /O0 /Fd${CMAKE_BINARY_DIR}/${PROJECT_NAME}.pdb")
+    set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /MT /Ox /Zi /Fd${CMAKE_BINARY_DIR}/${PROJECT_NAME}.pdb")
+    set(CMAKE_C_FLAGS_MINSIZEREL "${CMAKE_C_FLAGS_MINSIZEREL} /MT /Zi /Fd${CMAKE_BINARY_DIR}/${PROJECT_NAME}.pdb")
+    set(CMAKE_C_FLAGS_RELWITHDEBINFO "${CMAKE_C_FLAGS_RELWITHDEBINFO} /MT /Fd${CMAKE_BINARY_DIR}/${PROJECT_NAME}.pdb")
 endif()
 
 add_definitions(-DSEND_ARG2_CAST= -DGETHOSTBYNAME_ARG_CAST=)
