@@ -493,15 +493,29 @@ file(WRITE "${INCLUDE_DIR}/xmlversion.h" "${VERSION_BUFFER}")
 # FLAGS
 # -----
 
-if(CMAKE_COMPILER_IS_GNUCC)
-    set(CMAKE_C_FLAGS "-Wno-incompatible-pointer-types -Wno-format-extra-args -Wno-builtin-macro-redefined ${CMAKE_C_FLAGS}")
-elseif(CMAKE_C_COMPILER_ID MATCHES "Clang")
-    set(CMAKE_C_FLAGS "-Wno-incompatible-pointer-types -Wno-macro-redefined -Wno-empty-body ${CMAKE_C_FLAGS}")
+if(${CMAKE_C_COMPILER_ID} STREQUAL "GNU")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-incompatible-pointer-types -Wno-format-extra-args -Wno-builtin-macro-redefined -Wno-int-to-pointer-cast -Wno-pointer-to-int-cast")
+    if (NOT (MINGW OR MSYS))
+        # Macro redefinition errors
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Werror")
+    endif()
+elseif(${CMAKE_C_COMPILER_ID} STREQUAL "Clang")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Werror -Wno-incompatible-pointer-types -Wno-macro-redefined -Wno-empty-body")
 elseif(MSVC)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -WX")
     set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /MTd /O0 /Fd${CMAKE_BINARY_DIR}/${PROJECT_NAME}.pdb")
     set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /MT /Ox /Zi /Fd${CMAKE_BINARY_DIR}/${PROJECT_NAME}.pdb")
     set(CMAKE_C_FLAGS_MINSIZEREL "${CMAKE_C_FLAGS_MINSIZEREL} /MT /Zi /Fd${CMAKE_BINARY_DIR}/${PROJECT_NAME}.pdb")
     set(CMAKE_C_FLAGS_RELWITHDEBINFO "${CMAKE_C_FLAGS_RELWITHDEBINFO} /MT /Fd${CMAKE_BINARY_DIR}/${PROJECT_NAME}.pdb")
+endif()
+
+if(BUILD_STATIC)
+    if(MINGW OR MSYS)
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -static")
+    elseif(UNIX)
+        set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+        add_definitions(-fPIC -DPIC)
+    endif()
 endif()
 
 add_definitions(-DSEND_ARG2_CAST= -DGETHOSTBYNAME_ARG_CAST=)
@@ -545,16 +559,10 @@ endif()
 # ---------
 
 if(BUILD_STATIC)
-    add_library(libxml2
-        STATIC
-        ${LIBXML2_SOURCES}
-    )
+    add_library(libxml2 STATIC ${LIBXML2_SOURCES})
     add_definitions(-DLIBXML_STATIC)
 else()
-    add_library(libxml2
-        SHARED
-        ${LIBXML2_SOURCES}
-    )
+    add_library(libxml2 SHARED ${LIBXML2_SOURCES})
 endif()
 
 target_link_libraries(libxml2
