@@ -494,9 +494,9 @@ file(WRITE "${INCLUDE_DIR}/xmlversion.h" "${VERSION_BUFFER}")
 # -----
 
 if(${CMAKE_C_COMPILER_ID} STREQUAL "GNU")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Werror -Wno-incompatible-pointer-types -Wno-format-extra-args -Wno-builtin-macro-redefined -Wno-int-to-pointer-cast -Wno-pointer-to-int-cast")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Werror -Wno-incompatible-pointer-types -Wno-format-extra-args -Wno-builtin-macro-redefined -Wno-int-to-pointer-cast -Wno-pointer-to-int-cast -Wno-implicit-function-declaration")
 elseif(${CMAKE_C_COMPILER_ID} STREQUAL "Clang")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Werror -Wno-incompatible-pointer-types -Wno-macro-redefined -Wno-empty-body")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Werror -Wno-incompatible-pointer-types -Wno-macro-redefined -Wno-empty-body -Wno-implicit-function-declaration")
 elseif(MSVC)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -WX -wd4013 -wd4018 -wd4047 -wd4244 -wd4996")
     set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /MTd /O0 /Fd${CMAKE_BINARY_DIR}/${PROJECT_NAME}.pdb")
