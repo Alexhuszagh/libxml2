@@ -494,15 +494,11 @@ file(WRITE "${INCLUDE_DIR}/xmlversion.h" "${VERSION_BUFFER}")
 # -----
 
 if(${CMAKE_C_COMPILER_ID} STREQUAL "GNU")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-incompatible-pointer-types -Wno-format-extra-args -Wno-builtin-macro-redefined -Wno-int-to-pointer-cast -Wno-pointer-to-int-cast")
-    if (NOT (MINGW OR MSYS))
-        # Macro redefinition errors
-        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Werror")
-    endif()
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Werror -Wno-incompatible-pointer-types -Wno-format-extra-args -Wno-builtin-macro-redefined -Wno-int-to-pointer-cast -Wno-pointer-to-int-cast")
 elseif(${CMAKE_C_COMPILER_ID} STREQUAL "Clang")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Werror -Wno-incompatible-pointer-types -Wno-macro-redefined -Wno-empty-body")
 elseif(MSVC)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -WX")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -WX -wd4013 -wd4018 -wd4047 -wd4244 -wd4996")
     set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /MTd /O0 /Fd${CMAKE_BINARY_DIR}/${PROJECT_NAME}.pdb")
     set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /MT /Ox /Zi /Fd${CMAKE_BINARY_DIR}/${PROJECT_NAME}.pdb")
     set(CMAKE_C_FLAGS_MINSIZEREL "${CMAKE_C_FLAGS_MINSIZEREL} /MT /Zi /Fd${CMAKE_BINARY_DIR}/${PROJECT_NAME}.pdb")

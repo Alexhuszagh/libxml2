@@ -60,6 +60,7 @@
 #else
 #  ifdef HAVE__STAT
 #    if defined(_WIN32) || defined (__DJGPP__) && !defined (__CYGWIN__)
+#      undef stat
 #      define stat _stat
 #    endif
 #  endif

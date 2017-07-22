@@ -75,6 +75,7 @@
 # endif
 #elif defined(TRIO_PLATFORM_WIN32)
 # define USE_STRCASECMP
+# undef strcasecmp
 # if defined(_WIN32_WCE)
 #  define strcasecmp(x,y) _stricmp(x,y)
 # else
