@@ -87,7 +87,7 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 elif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Werror")
 elif(MSVC)
-    set(CMAKE_C_FLAGS "-WX ${CMAKE_C_FLAGS}")
+    set(CMAKE_C_FLAGS "/WX ${CMAKE_C_FLAGS}")
 endif()
 
 if(BUILD_STATIC)
