@@ -87,7 +87,7 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 elif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Werror")
 elif(MSVC)
-    set(CMAKE_C_FLAGS "/WX /wd4013 /wd4018 /wd4224 /wd4996 ${CMAKE_C_FLAGS}")
+    add_definitions("/WX /wd4013 /wd4018 /wd4224 /wd4996")
 endif()
 
 if(BUILD_STATIC)
