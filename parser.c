@@ -4421,7 +4421,7 @@ get_more:
 	    if (*in == ']') {
 		if ((in[1] == ']') && (in[2] == '>')) {
 		    xmlFatalErr(ctxt, XML_ERR_MISPLACED_CDATA_END, NULL);
-		    ctxt->input->cur = in;
+		    ctxt->input->cur = in + 1;
 		    return;
 		}
 		in++;
@@ -4574,7 +4574,7 @@ xmlParseCharDataComplex(xmlParserCtxtPtr ctxt, int cdata) {
 	    }
 	}
     }
-    if ((cur != 0) && (!IS_CHAR(cur))) {
+    if ((ctxt->input->cur < ctxt->input->end) && (!IS_CHAR(cur))) {
 	/* Generate the error and skip the offending character */
         xmlFatalErrMsgInt(ctxt, XML_ERR_INVALID_CHAR,
                           "PCDATA invalid Char value %d\n",
@@ -13224,7 +13224,7 @@ xmlParseExternalEntityPrivate(xmlDocPtr doc, xmlParserCtxtPtr oldctxt,
     /*
      * And record the last error if any
      */
-    if (ctxt->lastError.code != XML_ERR_OK)
+    if ((oldctxt != NULL) && (ctxt->lastError.code != XML_ERR_OK))
         xmlCopyError(&ctxt->lastError, &oldctxt->lastError);
 
     if (sax != NULL)
