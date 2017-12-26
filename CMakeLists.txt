@@ -16,7 +16,6 @@ set(LIBXML_VERSION_PATCH 4)
 # ARGUMENTS
 # ---------
 
-option(BUILD_STATIC "Build static libxml2" ON)
 option(BUILD_TESTS "Build libxml2 tests" ON)
 option(BUILD_ZLIB "Build local zlib" ON)
 
@@ -505,7 +504,7 @@ elseif(MSVC)
     set(CMAKE_C_FLAGS_RELWITHDEBINFO "${CMAKE_C_FLAGS_RELWITHDEBINFO} /MT /Fd${CMAKE_BINARY_DIR}/${PROJECT_NAME}.pdb")
 endif()
 
-if(BUILD_STATIC)
+if(NOT BUILD_SHARED_LIBS)
     if(MINGW OR MSYS OR CYGWIN)
         set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -static")
     elseif(UNIX)
@@ -554,11 +553,9 @@ endif()
 # LIBRARIES
 # ---------
 
-if(BUILD_STATIC)
-    add_library(libxml2 STATIC ${LIBXML2_SOURCES})
+add_library(libxml2 ${LIBXML2_SOURCES})
+if(NOT BUILD_SHARED_LIBS)
     add_definitions(-DLIBXML_STATIC)
-else()
-    add_library(libxml2 SHARED ${LIBXML2_SOURCES})
 endif()
 
 target_link_libraries(libxml2
