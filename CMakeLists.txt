@@ -192,7 +192,11 @@ DefineIncludeHeaders(
     dlfcn.h
 )
 
-set(ENABLE_TRIO NOT ${STRING_H} OR NOT ${STDIO_H})
+if (STRING_H AND STDIO_H)
+    set(ENABLE_TRIO OFF)
+else()
+    set(ENABLE_TRIO ON)
+endif()
 
 # TODO: need to check for zlib.h and if I have it, define HAVE_ZLIB_H
 
